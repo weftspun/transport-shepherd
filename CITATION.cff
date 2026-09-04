@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: transport-shepherd
+message: >-
+  Elixir Burrito TUI that reduces weftspun's Bao agent enrol / rotate /
+  migrate / revoke ceremony to one command per operation.
+type: software
+authors:
+  - name: Weftspun contributors
+repository-code: https://github.com/weftspun/transport-shepherd
+license: Apache-2.0 OR MIT
