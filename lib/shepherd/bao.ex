@@ -84,20 +84,19 @@ defmodule Shepherd.Bao do
     end
   end
 
+  # Never ~/.bao-token: on a shared-$HOME box it is one file for every
+  # agent, and the last login wins for all of them (RFD 2195 DETAILS).
   defp token do
     case System.get_env("BAO_TOKEN") do
-      nil -> read_token_file()
-      "" -> read_token_file()
+      nil -> raise token_error()
+      "" -> raise token_error()
       t -> t
     end
   end
 
-  defp read_token_file do
-    path = Path.expand("~/.bao-token")
-    case File.read(path) do
-      {:ok, t} -> String.trim(t)
-      _ -> raise "no BAO_TOKEN in env and no #{path}; run `bao login` first"
-    end
+  defp token_error do
+    "BAO_TOKEN is unset; login with -no-store into your per-agent " <>
+      "credentials directory and export it (RFD 2195 DETAILS)"
   end
 
   defp ca_bundle, do: System.get_env("BAO_CACERT", "/etc/ssl/cert.pem")

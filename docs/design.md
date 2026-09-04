@@ -114,13 +114,15 @@ The classes the CLI recognises:
   `agents/data/{{identity.entity.aliases.<cert accessor>.name}}`, and
   the alias name is the certificate CN. What produces the 403 is a
   stale `~/.bao-token`: `bao` prefers the file over a fresh login, cert
-  tokens live 8 h, and the file survives rotate and migrate. On
-  2026-09-04 one agent's file held another agent's identity and a
-  second held a token minted before its group mapping attached. Every
-  peer command deletes `~/.bao-token` before `bao login`, and `status`
-  asserts `entity_id` against the agent's own alias before anything
-  else. Nothing is writable *under* a row (`…/heartbeats/<ts>` is
-  `deny`); the row is the row.
+  tokens live 8 h, and on a shared-`$HOME` box it is one file for
+  every agent, so the last `bao login` by any of them wins for all.
+  On 2026-09-04 one agent's file held another agent's identity and the
+  delete-and-relogin fix held for thirty minutes. So shepherd never
+  reads or writes `~/.bao-token`: every login is `-no-store` into the
+  agent's own credentials directory, `BAO_TOKEN` is required in the
+  environment, and `status` asserts `entity_id` against the agent's
+  own alias before anything else. Nothing is writable *under* a row
+  (`…/heartbeats/<ts>` is `deny`); the row is the row.
 
 ## Non-goals
 
