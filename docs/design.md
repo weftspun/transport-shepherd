@@ -109,9 +109,18 @@ The classes the CLI recognises:
 - The identity group reconciler wants entity IDs, not names. The peer
   half of migrate holds a name; the coordinator half looks the ID up
   and writes the group.
-- Heartbeat row is KV v2; `create` uses the v1 write, `update` uses v2
-  with a `cas`. Confusing the two gives a spurious 403 that reads like
-  a policy failure.
+- A 403 on the agent's own row is almost never the policy. `agents-rw`
+  grants `create, read, update, delete` on
+  `agents/data/{{identity.entity.aliases.<cert accessor>.name}}`, and
+  the alias name is the certificate CN. What produces the 403 is a
+  stale `~/.bao-token`: `bao` prefers the file over a fresh login, cert
+  tokens live 8 h, and the file survives rotate and migrate. On
+  2026-09-04 one agent's file held another agent's identity and a
+  second held a token minted before its group mapping attached. Every
+  peer command deletes `~/.bao-token` before `bao login`, and `status`
+  asserts `entity_id` against the agent's own alias before anything
+  else. Nothing is writable *under* a row (`…/heartbeats/<ts>` is
+  `deny`); the row is the row.
 
 ## Non-goals
 
