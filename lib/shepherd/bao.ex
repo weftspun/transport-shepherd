@@ -10,7 +10,9 @@ defmodule Shepherd.Bao do
   so surprises stay near their handlers.
   """
 
-  @default_addr "https://bao.chibifire.com:8200"
+  # No default: RFD 2195 puts Bao on the tailnet at
+  # https://weftspun-bao.<tailnet>.ts.net:8200, and a guessed host fails
+  # slower and less clearly than an unset variable.
 
   # HTTP -----------------------------------------------------------------
 
@@ -74,7 +76,13 @@ defmodule Shepherd.Bao do
 
   # Environment ----------------------------------------------------------
 
-  defp addr, do: System.get_env("BAO_ADDR", @default_addr)
+  defp addr do
+    case System.get_env("BAO_ADDR") do
+      nil -> raise "BAO_ADDR is unset; see RFD 2195 (https://weftspun-bao.<tailnet>.ts.net:8200)"
+      "" -> raise "BAO_ADDR is empty; see RFD 2195 (https://weftspun-bao.<tailnet>.ts.net:8200)"
+      a -> a
+    end
+  end
 
   defp token do
     case System.get_env("BAO_TOKEN") do
