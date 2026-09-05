@@ -19,7 +19,8 @@ defmodule Shepherd.Gates do
     "asset-prefix" => Shepherd.Gates.AssetPrefix,
     "manifest-root" => Shepherd.Gates.ManifestRoot,
     "no-auto" => Shepherd.Gates.NoAuto,
-    "project-readme-length" => Shepherd.Gates.ProjectReadmeLength
+    "project-readme-length" => Shepherd.Gates.ProjectReadmeLength,
+    "rfd-canary" => Shepherd.Gates.RfdCanary
   }
 
   def dispatch([name | argv]) do
