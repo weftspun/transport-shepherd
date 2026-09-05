@@ -19,6 +19,7 @@ defmodule Shepherd.CLI do
       ["migrate" | rest] -> Shepherd.Migrate.run(rest)
       ["revoke" | rest] -> Shepherd.Revoke.run(rest)
       ["status" | rest] -> Shepherd.Status.run(rest)
+      ["gates" | rest] -> Shepherd.Gates.dispatch(rest)
       ["version"] -> IO.puts(vsn())
       [] -> IO.puts(help_text())
       ["help"] -> IO.puts(help_text())
@@ -42,6 +43,7 @@ defmodule Shepherd.CLI do
       migrate NEW_CN         swap CN with a fresh keypair
       revoke CN              coordinator: tear down an identity
       status                 fleet snapshot + own state
+      gates <name> [args]    run a workspace gate (see `shepherd gates`)
       version                print version
       help                   this text
     """

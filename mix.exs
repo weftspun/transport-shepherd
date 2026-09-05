@@ -7,6 +7,7 @@ defmodule Shepherd.MixProject do
       version: "0.1.0-dev",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps(),
       releases: releases(),
       escript: [main_module: Shepherd.CLI]
@@ -26,6 +27,17 @@ defmodule Shepherd.MixProject do
       {:req, "~> 0.5"},
       {:jason, "~> 1.4"}
     ]
+  end
+
+  # `mix gates <name> …` dispatches into Shepherd.Gates without a
+  # Burrito build. Same code path the binary uses.
+  defp aliases do
+    [gates: ["compile", &gates_task/1]]
+  end
+
+  defp gates_task(argv) do
+    Mix.Task.run("app.start")
+    System.halt(Shepherd.Gates.dispatch(argv))
   end
 
   # Burrito builds one self-contained binary per target platform.
