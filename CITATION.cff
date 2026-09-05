@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 title: transport-shepherd
 message: >-
-  Elixir Burrito TUI that reduces weftspun's Bao agent enrol / rotate /
-  migrate / revoke ceremony to one command per operation.
+  Elixir Burrito TUI for the weftspun agent fleet: status and workspace
+  gates.
 type: software
 authors:
   - name: Weftspun contributors

@@ -49,7 +49,6 @@ defmodule Shepherd.MixProject do
         burrito: [
           targets: [
             macos_arm64: [os: :darwin, cpu: :aarch64],
-            linux_amd64: [os: :linux, cpu: :x86_64],
             windows_amd64: [os: :windows, cpu: :x86_64]
           ]
         ]

@@ -2,76 +2,34 @@
 
 The one-command-per-operation surface is above; this document is the
 operational model behind each command and the RFD 2195 DETAILS gotchas
-each command internalises so the CLI-user never sees them.
+retained as reference for the ceremony that used to live here.
 
 ## Operating model
 
 Two roles at runtime:
 
 - **peer**: a box the workspace runs on (HERD, HERO, SIDEKICK, ANCHOR
-  today, plus the assist pool). Runs `enroll`, `rotate`, `migrate`.
-- **coordinator**: the box that holds the Bao admin token. Runs
-  `revoke`. Also runs the signing half of every peer command, addressed
-  by a SendMessage relay from the peer's shepherd invocation.
+  today, plus the assist pool). Runs `status` and `gates`.
+- **coordinator**: the box that holds the Bao admin token. Runs `status`
+  and `gates` too; the coordinator-half responsibilities the trimmed
+  commands had (signing, publishing bundles, applying tuples) are done
+  by hand through the Bao CLI now.
 
-Both halves are the same binary. Which half runs is decided by argv
-plus the presence of an admin-scope Bao token; the peer half never
-holds one.
+Both halves are the same binary. Which half runs is decided by the
+presence of an admin-scope Bao token; the peer half never holds one.
 
 ## Per-command state machines
 
-### enroll (peer)
+### status (any)
 
-    read/confirm CN
-    generate keypair under ~/.shepherd/<cn>/{key.pem,cert.pem,chain.pem}
-    build CSR
-    hand CSR to coordinator (SendMessage; the coordinator command
-      handles: sign, publish bundle to Bao KV certs/<cn>, create
-      cert-auth entry, apply ReBAC tuples for declared role+host, run
-      group reconciler)
-    poll certs/<cn> until the signed bundle appears (backoff 2/4/8/16 s)
-    install cert bundle (0600 on key, 0644 on cert + chain)
-    bao login -method=cert (stash token at ~/.bao-token)
-    write first heartbeat row to agents/<cn>.agents.weftspun
-    repo sync at workspace root
+Reads own alias against `sys/auth` to confirm the cert-auth accessor
+still matches the token's, then walks the agents/ KV subtree to render
+last-heartbeat times per CN.
 
-### rotate (peer)
+### gates (any)
 
-Same as enroll except CN comes from ~/.shepherd/current and the last
-step is a coordinator-side revoke of the old serial rather than a
-`repo sync`.
-
-### migrate (peer, `shepherd migrate NEW_CN`)
-
-The two ceremony most likely to leave a half-migrated fleet, so the
-state machine is explicit about the ordering:
-
-    resolve NEW_CN + read old CN from ~/.shepherd/current
-    generate fresh keypair under ~/.shepherd/<NEW_CN>/
-    build CSR for NEW_CN
-    hand CSR + migration intent to coordinator, which:
-      signs against NEW_CN,
-      creates cert-auth entry for NEW_CN,
-      migrates ReBAC tuples (rewrite subject/object where they matched old CN),
-      reconciles identity groups (add NEW_CN's entity to the groups
-        old CN was in; do not remove old CN yet — it stays alive
-        through the changeover)
-    poll certs/<NEW_CN> for signed bundle
-    install bundle
-    bao login as NEW_CN
-    write heartbeat row at NEW_CN
-    coordinator: tear down old cert-auth entry, revoke old serial,
-      remove old CN's entity from groups, delete agents/<old-cn>.…
-    update ~/.shepherd/current to NEW_CN
-
-### revoke (coordinator, `shepherd revoke CN`)
-
-    read cert-auth entry (serial, accessor)
-    delete cert-auth entry
-    revoke PKI serial
-    drop ReBAC tuples where subject or object == CN
-    remove entity from all identity groups
-    delete Bao KV rows for certs/CN and agents/CN.agents.weftspun
+Dispatches to `Shepherd.Gates.<Name>.run/1`. Each gate ships its own
+`--self-test`; the dispatcher lists gates when called with no argument.
 
 ## Error taxonomy
 
@@ -82,12 +40,13 @@ The classes the CLI recognises:
   attempts, then surface with the last error.
 - **permission** (403): stop, print the token accessor and policy path
   in effect, and exit non-zero — the CLI cannot escalate itself.
-- **conflict** (existing cert-auth entry, existing tuple, existing
-  group membership): idempotent skip with a `→ already present` note.
 - **shape** (malformed CSR, unreadable cert, wrong CA chain): stop, do
   not retry, exit non-zero.
 
-## RFD 2195 gotchas each command internalises
+## RFD 2195 gotchas the trimmed commands internalised
+
+Kept as reference for retrofit. Still true about the ceremony that
+existed:
 
 - Bundle install writes leaf-and-chain concatenated in the order Bao's
   `bao login -method=cert` requires (leaf first, then intermediates,
@@ -126,8 +85,8 @@ The classes the CLI recognises:
 
 ## Non-goals
 
-- Not a general Bao client; only the calls the shepherd commands need.
+- Not a general Bao client; only the calls `status` needs.
 - Not a policy editor; changes to `agents-rw` or `mps-admin` are done
   by hand through `weftspun/dot-claude` review.
-- Not a group definer; `shepherd` reconciles memberships, but the
-  groups themselves are declared in RFD 2202.
+- Not a group definer; groups are declared in RFD 2202 and reconciled
+  by hand for now.
