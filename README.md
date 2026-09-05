@@ -13,7 +13,7 @@ This project sits on the **1-transport** side of the hexagon. `status` moves fle
 
 ## Runtime
 
-Elixir 1.18 or later, compiled to a self-contained binary via [Burrito](https://github.com/burrito-elixir/burrito). Ships as one file per target platform (macOS ARM64, Windows x86_64), no Erlang runtime dependency on the host. TUI via [Owl](https://hexdocs.pm/owl/). Bao HTTP client via `Req`.
+Elixir 1.18 or later, compiled to a self-contained binary via [Burrito](https://github.com/burrito-elixir/burrito). Ships as one file per target platform (macOS ARM64, Windows x86_64), no Erlang runtime dependency on the host. Bao HTTP client via `Req`.
 
 ## Status
 

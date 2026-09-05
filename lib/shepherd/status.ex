@@ -13,8 +13,8 @@ defmodule Shepherd.Status do
   """
 
   def run(_argv) do
-    Owl.IO.puts(Owl.Data.tag("shepherd status", :cyan))
-    Owl.IO.puts("skeleton — implementation pending")
+    IO.puts("shepherd status")
+    IO.puts("skeleton — implementation pending")
     System.halt(0)
   end
 end
