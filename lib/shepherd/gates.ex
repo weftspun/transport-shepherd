@@ -17,6 +17,7 @@ defmodule Shepherd.Gates do
 
   @gates %{
     "asset-prefix" => Shepherd.Gates.AssetPrefix,
+    "blocklist-detail" => Shepherd.Gates.BlocklistDetail,
     "commit-style" => Shepherd.Gates.CommitStyle,
     "ggml-singleton" => Shepherd.Gates.GgmlSingleton,
     "logbook-count" => Shepherd.Gates.LogbookCount,
