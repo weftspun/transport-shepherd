@@ -20,7 +20,8 @@ defmodule Shepherd.Gates do
     "manifest-root" => Shepherd.Gates.ManifestRoot,
     "no-auto" => Shepherd.Gates.NoAuto,
     "project-readme-length" => Shepherd.Gates.ProjectReadmeLength,
-    "rfd-canary" => Shepherd.Gates.RfdCanary
+    "rfd-canary" => Shepherd.Gates.RfdCanary,
+    "rfd-state-canonical" => Shepherd.Gates.RfdStateCanonical
   }
 
   def dispatch([name | argv]) do
