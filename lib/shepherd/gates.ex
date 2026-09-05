@@ -20,6 +20,7 @@ defmodule Shepherd.Gates do
     "blocklist-detail" => Shepherd.Gates.BlocklistDetail,
     "commit-style" => Shepherd.Gates.CommitStyle,
     "ggml-singleton" => Shepherd.Gates.GgmlSingleton,
+    "goal-manifests" => Shepherd.Gates.GoalManifests,
     "logbook-count" => Shepherd.Gates.LogbookCount,
     "manifest-root" => Shepherd.Gates.ManifestRoot,
     "no-auto" => Shepherd.Gates.NoAuto,
