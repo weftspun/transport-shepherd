@@ -17,6 +17,7 @@ defmodule Shepherd.Gates do
 
   @gates %{
     "asset-prefix" => Shepherd.Gates.AssetPrefix,
+    "ggml-singleton" => Shepherd.Gates.GgmlSingleton,
     "manifest-root" => Shepherd.Gates.ManifestRoot,
     "no-auto" => Shepherd.Gates.NoAuto,
     "no-orphaned-branches" => Shepherd.Gates.NoOrphanedBranches,
