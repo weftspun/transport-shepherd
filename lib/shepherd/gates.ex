@@ -16,6 +16,7 @@ defmodule Shepherd.Gates do
   """
 
   @gates %{
+    "anti-entropy" => Shepherd.Gates.AntiEntropy,
     "asset-prefix" => Shepherd.Gates.AssetPrefix,
     "blocklist-detail" => Shepherd.Gates.BlocklistDetail,
     "comment-density" => Shepherd.Gates.CommentDensity,
