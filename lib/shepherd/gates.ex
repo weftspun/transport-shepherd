@@ -19,6 +19,7 @@ defmodule Shepherd.Gates do
     "asset-prefix" => Shepherd.Gates.AssetPrefix,
     "manifest-root" => Shepherd.Gates.ManifestRoot,
     "no-auto" => Shepherd.Gates.NoAuto,
+    "no-orphaned-branches" => Shepherd.Gates.NoOrphanedBranches,
     "project-readme-length" => Shepherd.Gates.ProjectReadmeLength,
     "rfd-canary" => Shepherd.Gates.RfdCanary,
     "rfd-readme-present" => Shepherd.Gates.RfdReadmePresent,
