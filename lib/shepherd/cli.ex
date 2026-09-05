@@ -3,21 +3,19 @@ defmodule Shepherd.CLI do
   Burrito entry point. `System.argv/0` on a Burrito binary is the CLI args.
 
   Commands:
-    shepherd enroll             (peer, first-time onboarding)
-    shepherd rotate             (peer, fresh keypair, same CN)
-    shepherd migrate NEW_CN     (peer, full migration to new CN)
-    shepherd revoke CN          (coordinator, tear down an identity)
     shepherd status             (any, snapshot fleet + own state)
+    shepherd gates <name>       (run a workspace gate; `shepherd gates` lists)
     shepherd version            (any)
+
+  The enrol / rotate / migrate / revoke ceremony was trimmed after
+  per-agent `BAO_TOKEN` + `bao login -no-store` closed the stale-token
+  failure mode RFD 2195 was written against. If those commands are
+  needed again, retrofit from RFD 2195 DETAILS §"stale token file".
   """
 
   # Burrito invokes main/1 with argv.
   def main(argv) do
     case argv do
-      ["enroll" | rest] -> Shepherd.Enrol.run(rest)
-      ["rotate" | rest] -> Shepherd.Rotate.run(rest)
-      ["migrate" | rest] -> Shepherd.Migrate.run(rest)
-      ["revoke" | rest] -> Shepherd.Revoke.run(rest)
       ["status" | rest] -> Shepherd.Status.run(rest)
       ["gates" | rest] -> Shepherd.Gates.dispatch(rest)
       ["version"] -> IO.puts(vsn())
@@ -38,10 +36,6 @@ defmodule Shepherd.CLI do
     shepherd — weftspun agent lifecycle TUI.
 
     Commands:
-      enroll                 first-time onboarding for a new agent
-      rotate                 fresh keypair against the current CN
-      migrate NEW_CN         swap CN with a fresh keypair
-      revoke CN              coordinator: tear down an identity
       status                 fleet snapshot + own state
       gates <name> [args]    run a workspace gate (see `shepherd gates`)
       version                print version
