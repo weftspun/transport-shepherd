@@ -23,7 +23,6 @@ defmodule Shepherd.MixProject do
   defp deps do
     [
       {:burrito, "~> 1.3"},
-      {:owl, "~> 0.12"},
       {:req, "~> 0.5"},
       {:jason, "~> 1.4"}
     ]

@@ -1,18 +1,15 @@
 defmodule Shepherd.Bao do
   @moduledoc """
-  Thin Bao HTTP client. Reads `BAO_ADDR` and `BAO_TOKEN` from env; falls
-  back to `~/.bao-token` for the token so the CLI still works after a
-  fresh `bao login` in a sibling shell.
+  Thin Bao HTTP client. Reads `BAO_ADDR` and `BAO_TOKEN` from env. Never
+  reads `~/.bao-token`: on a shared-`$HOME` box it is one file for every
+  agent (RFD 2195 DETAILS §"stale token file").
 
-  This module wraps only what the shepherd commands need: cert-auth CRUD,
-  KV v2 read/write, PKI sign/revoke, identity groups. It is deliberately
-  small — anything else drops through to `Req` directly at the call site
-  so surprises stay near their handlers.
+  Wraps only what `status` and `gates` need: raw HTTP verbs plus KV v2
+  read/write. The PKI, cert-auth and identity-group calls were trimmed
+  after the enrol/rotate/migrate/revoke ceremony went; if those calls
+  are needed again, retrofit from RFD 2195 DETAILS §"stale token file"
+  (same pointer `lib/shepherd/cli.ex` already names).
   """
-
-  # No default: RFD 2195 puts Bao on the tailnet at
-  # https://weftspun-bao.<tailnet>.ts.net:8200, and a guessed host fails
-  # slower and less clearly than an unset variable.
 
   # HTTP -----------------------------------------------------------------
 
@@ -45,35 +42,6 @@ defmodule Shepherd.Bao do
     put("#{mount}/data/#{key}", %{data: data})
   end
 
-  # PKI ------------------------------------------------------------------
-
-  def pki_sign(role, csr_pem, ttl \\ "8760h") do
-    post("pki_int/sign/#{role}", %{csr: csr_pem, ttl: ttl})
-  end
-
-  def pki_revoke(serial) do
-    post("pki_int/revoke", %{serial_number: serial})
-  end
-
-  # Cert-auth ------------------------------------------------------------
-
-  def cert_auth_write(name, cert_pem, policies, ttl \\ "8h") do
-    post("auth/cert/certs/#{name}", %{
-      certificate: cert_pem,
-      display_name: name,
-      token_policies: policies,
-      token_ttl: ttl
-    })
-  end
-
-  def cert_auth_delete(name), do: delete("auth/cert/certs/#{name}")
-
-  # Identity groups ------------------------------------------------------
-
-  def group_add(group_id, entity_ids) do
-    post("identity/group/id/#{group_id}", %{member_entity_ids: entity_ids})
-  end
-
   # Environment ----------------------------------------------------------
 
   defp addr do
@@ -84,8 +52,6 @@ defmodule Shepherd.Bao do
     end
   end
 
-  # Never ~/.bao-token: on a shared-$HOME box it is one file for every
-  # agent, and the last login wins for all of them (RFD 2195 DETAILS).
   defp token do
     case System.get_env("BAO_TOKEN") do
       nil -> raise token_error()
