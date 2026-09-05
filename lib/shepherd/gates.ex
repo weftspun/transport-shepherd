@@ -18,7 +18,8 @@ defmodule Shepherd.Gates do
   @gates %{
     "asset-prefix" => Shepherd.Gates.AssetPrefix,
     "manifest-root" => Shepherd.Gates.ManifestRoot,
-    "no-auto" => Shepherd.Gates.NoAuto
+    "no-auto" => Shepherd.Gates.NoAuto,
+    "project-readme-length" => Shepherd.Gates.ProjectReadmeLength
   }
 
   def dispatch([name | argv]) do
