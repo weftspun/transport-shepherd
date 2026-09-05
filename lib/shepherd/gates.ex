@@ -28,7 +28,8 @@ defmodule Shepherd.Gates do
     "project-readme-length" => Shepherd.Gates.ProjectReadmeLength,
     "rfd-canary" => Shepherd.Gates.RfdCanary,
     "rfd-readme-present" => Shepherd.Gates.RfdReadmePresent,
-    "rfd-state-canonical" => Shepherd.Gates.RfdStateCanonical
+    "rfd-state-canonical" => Shepherd.Gates.RfdStateCanonical,
+    "tropes" => Shepherd.Gates.Tropes
   }
 
   def dispatch([name | argv]) do
