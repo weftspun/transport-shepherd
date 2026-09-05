@@ -16,7 +16,8 @@ defmodule Shepherd.Gates do
   """
 
   @gates %{
-    "manifest-root" => Shepherd.Gates.ManifestRoot
+    "manifest-root" => Shepherd.Gates.ManifestRoot,
+    "no-auto" => Shepherd.Gates.NoAuto
   }
 
   def dispatch([name | argv]) do
