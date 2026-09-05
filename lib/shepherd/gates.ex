@@ -21,6 +21,7 @@ defmodule Shepherd.Gates do
     "no-auto" => Shepherd.Gates.NoAuto,
     "project-readme-length" => Shepherd.Gates.ProjectReadmeLength,
     "rfd-canary" => Shepherd.Gates.RfdCanary,
+    "rfd-readme-present" => Shepherd.Gates.RfdReadmePresent,
     "rfd-state-canonical" => Shepherd.Gates.RfdStateCanonical
   }
 
